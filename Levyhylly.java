@@ -18,6 +18,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JMenu;
+import java.awt.Color;
 
 	public class Levyhylly extends JFrame {
 		
@@ -31,24 +33,47 @@ import javax.swing.JMenuItem;
 		static JButton btnUpdate; 
 		static JButton btnDeleteRow; 
 		private JMenuBar menuBar;
+		private JMenu mnTiedosto;
+		private JMenu mnTietoja;
 		
 		public Levyhylly(){
-			super("Levykokoelma");
+			super("Levyhylly");
 
 			initiateRecordCollection();
 			
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
-			BorderLayout sijoittelija = new BorderLayout();
-			getContentPane().setLayout(sijoittelija); 
+			
+			BorderLayout layout = new BorderLayout();
+			getContentPane().setLayout(layout); 
 			setBounds(0,0,840,666); 
 			setLocationRelativeTo(null);
 
 			
 			tableRecord = new JTable();
-			tableRecord.setRowSelectionAllowed(false);
+			tableRecord.setSelectionBackground(Color.YELLOW);
 			tableRecord.setModel(new DefaultTableModel(
-				new Object[MAX_QTY][3],  
-				new String[] {"nimi", "artisti", "julkaisvuosi"} 
+				new Object[][] {
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+					{null, null, null},
+				},
+				new String[] {
+					"nimi", "artisti", "julkaisvuosi"
+				}
 			));
 			tableRecord.setBounds(10, 36, 240, 100);
 			getContentPane().add(tableRecord, BorderLayout.CENTER);
@@ -57,17 +82,17 @@ import javax.swing.JMenuItem;
 			
 			btnAddRecord = new JButton("Lis‰‰ uusi levy");
 			btnAddRecord.setBounds(270, 36, 89, 23);
-			MyEventHandler commandHandler = new MyEventHandler();
+			EventHandlerAdd commandHandler = new EventHandlerAdd();
 			btnAddRecord.addActionListener(commandHandler);
 
 			btnUpdate = new JButton("P‰ivit‰ taulukko");
 			btnUpdate.setBounds(270, 36, 89, 23);
-			MyEventHandler2 commandHandler2 = new MyEventHandler2();
+			EventHandlerUpdate commandHandler2 = new EventHandlerUpdate();
 			btnUpdate.addActionListener(commandHandler2);
 
 			btnDeleteRow = new JButton("Poista valittu rivi");
 			btnDeleteRow.setBounds(270, 36, 89, 23);
-			MyEventHandler3 commandHandler3 = new MyEventHandler3();
+			EventHandlerDelete commandHandler3 = new EventHandlerDelete();
 			btnDeleteRow.addActionListener(commandHandler3);
 
 			JPanel buttonPanel = new JPanel();
@@ -79,6 +104,12 @@ import javax.swing.JMenuItem;
 			
 			menuBar = new JMenuBar();
 			setJMenuBar(menuBar);
+			
+			mnTiedosto = new JMenu("TIedosto");
+			menuBar.add(mnTiedosto);
+			
+			mnTietoja = new JMenu("Tietoja");
+			menuBar.add(mnTietoja);
 
 		}
 
@@ -117,11 +148,11 @@ import javax.swing.JMenuItem;
 			
 		}
 		
-		private class MyEventHandler implements ActionListener
+		private class EventHandlerAdd implements ActionListener
 		{
-			public void actionPerformed (ActionEvent myEvent) 
+			public void actionPerformed (ActionEvent addingEvent) 
 			{
-				if (myEvent.getSource() == btnAddRecord){
+				if (addingEvent.getSource() == btnAddRecord){
 					if (dbItems < MAX_QTY){
 						getNewRecordFromUser();
 						populateTable();
@@ -133,7 +164,7 @@ import javax.swing.JMenuItem;
 			}
 			}
 	
-		private class MyEventHandler2 implements ActionListener
+		private class EventHandlerUpdate implements ActionListener
 		{
 			public void actionPerformed (ActionEvent myEvent) 
 			{
@@ -143,7 +174,7 @@ import javax.swing.JMenuItem;
 				}
 			}
 	}
-			private class MyEventHandler3 implements ActionListener
+			private class EventHandlerDelete implements ActionListener
 			{
 				public void actionPerformed (ActionEvent myEvent) 
 				{
@@ -180,7 +211,7 @@ import javax.swing.JMenuItem;
 	            Statement stmt = con.createStatement();
 	          	ResultSet rs = stmt.executeQuery("SELECT * FROM Levy");
 	         
-	            PreparedStatement ps = con.prepareStatement("INSERT INTO levy (nimi, artisti, julkaisuvuosi) VALUES (?, ?, ?)");
+	            PreparedStatement ps = con.prepareStatement("INSERT INTO LEVY (nimi, artisti, julkaisuvuosi) VALUES (?, ?, ?)");
 	            ps.setString(1, nimiField.getText());
 	            ps.setString(2, artistiField.getText());
 	            ps.setString(3, julkaisvuosiField.getText());
@@ -198,7 +229,7 @@ import javax.swing.JMenuItem;
  
 		        int SelectedRow = tableRecord.getSelectedRow();
 	            String dnimi = (String) tableRecord.getValueAt(SelectedRow, 0);
-	            String SQL = "DELETE FROM levy WHERE nimi = '" + dnimi +"'";
+	            String SQL = "DELETE FROM LEVY WHERE nimi = '" + dnimi +"'";
 	            
 	            Object[] options = { "Poista levy", "Peruuta" };
 
